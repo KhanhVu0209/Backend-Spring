@@ -1,97 +1,97 @@
 package com.example.project.BackendSpring.Models;
 
 import jakarta.persistence.*;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.UuidGenerator;
 
-import java.util.Date;
+import java.sql.Date;
 import java.util.UUID;
 
-@jakarta.persistence.Entity
-@jakarta.persistence.Table(name = "Unit")
+@Entity
 public class Unit {
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    @GeneratedValue
-    @UuidGenerator
-    private UUID Id;
-    @jakarta.persistence.Column(name = "ParentId")
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID ParentId;
-    @jakarta.persistence.Column(name = "CreatedBy")
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID CreatedBy;
-    @jakarta.persistence.Column(name = "UnitName")
-    private String UnitName;
-    @jakarta.persistence.Column(name = "UnitCode")
-    private String UnitCode;
-    @jakarta.persistence.Column(name = "Status")
-    private Integer Status;
-    @jakarta.persistence.Column(name = "IsHide")
-    private Boolean IsHide;
-    @jakarta.persistence.Column(name = "CreatedDate")
-    private Date CreatedDate;
+    @Column(name = "id")
+    private UUID id;
+    @Column(name = "unitname")
+    private String unitName;
+    @Column(name = "parentid")
+
+    private UUID parentId;
+    @Column(name = "status")
+
+    private Integer status;
+    @Column(name = "createdby")
+    private UUID createdBy;
+    @Column(name = "createddate")
+
+    private Date createdDate;
+    @Column(name = "unitcode")
+
+    private String unitCode;
+    @Column(name = "ishide")
+
+    private Boolean isHide;
 
     public UUID getId() {
-        return Id;
+        return id;
     }
 
     public void setId(UUID id) {
-        Id = id;
-    }
-
-    public UUID getParentId() {
-        return ParentId;
-    }
-
-    public void setParentId(UUID parentId) {
-        ParentId = parentId;
-    }
-
-    public UUID getCreatedBy() {
-        return CreatedBy;
-    }
-
-    public void setCreatedBy(UUID createdBy) {
-        CreatedBy = createdBy;
+        this.id = id;
     }
 
     public String getUnitName() {
-        return UnitName;
+        return unitName;
     }
 
     public void setUnitName(String unitName) {
-        UnitName = unitName;
+        this.unitName = unitName;
     }
 
-    public String getUnitCode() {
-        return UnitCode;
+    public UUID getParentId() {
+        return parentId;
     }
 
-    public void setUnitCode(String unitCode) {
-        UnitCode = unitCode;
+    public void setParentId(UUID parentId) {
+        this.parentId = parentId;
     }
 
     public Integer getStatus() {
-        return Status;
+        return status;
     }
 
     public void setStatus(Integer status) {
-        Status = status;
+        this.status = status;
     }
 
-    public Boolean getHide() {
-        return IsHide;
+    public UUID getCreatedBy() {
+        return createdBy;
     }
 
-    public void setHide(Boolean hide) {
-        IsHide = hide;
+    public void setCreatedBy(UUID createdBy) {
+        this.createdBy = createdBy;
     }
 
     public Date getCreatedDate() {
-        return CreatedDate;
+        return createdDate;
     }
 
     public void setCreatedDate(Date createdDate) {
-        CreatedDate = createdDate;
+        this.createdDate = createdDate;
+    }
+
+    public String getUnitCode() {
+        return unitCode;
+    }
+
+    public void setUnitCode(String unitCode) {
+        this.unitCode = unitCode;
+    }
+
+    public Boolean getHide() {
+        return isHide;
+    }
+
+    public void setHide(Boolean hide) {
+        isHide = hide;
     }
 }

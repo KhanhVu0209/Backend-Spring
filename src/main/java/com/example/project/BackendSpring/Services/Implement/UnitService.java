@@ -77,7 +77,7 @@ public class UnitService implements UnitInterface {
         }
 
         int NumPageSize = pageSize == 0 ? 1 : pageSize;
-
+        logger.info("Lấy danh sách thành công !");
         return new TemplateApi(null, units.toArray(new Unit[0]), "Lấy danh sách thành công", true, false, pageNumber, pageSize, countRecord, NumPageSize);
     }
 

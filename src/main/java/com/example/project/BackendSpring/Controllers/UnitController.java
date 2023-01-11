@@ -19,13 +19,8 @@ public class UnitController {
 
     @GetMapping("/units")
     private ResponseEntity<TemplateApi> getAllUnits(int pageNumber, int pageSize) {
-        try {
-            var results =  unitService.GetAllUnit(pageNumber, pageSize);
-            return ResponseEntity.ok(results);
-        } catch (Exception e) {
-            // Xử lý lỗi
-            return ResponseEntity.ok(new TemplateApi(e.getMessage(), true, false));
-        }
+        var results =  unitService.GetAllUnit(pageNumber, pageSize);
+        return ResponseEntity.ok(results);
     }
     @GetMapping("/unit/{id}")
     private ResponseEntity<TemplateApi> getUnitById(@PathVariable(value = "id") UUID idUnit) {
@@ -33,7 +28,7 @@ public class UnitController {
         return ResponseEntity.ok(result);
     }
     @PostMapping("/unit")
-    public ResponseEntity<TemplateApi> createUnit(UnitPayload unitPayload) {
+    private ResponseEntity<TemplateApi> createUnit(UnitPayload unitPayload) {
 
         UUID idUserCurrent = UUID.randomUUID();
         String fullName = "";
@@ -53,7 +48,7 @@ public class UnitController {
     }
 
     @PutMapping("/unit/{id}")
-    public ResponseEntity<TemplateApi> updateUnit(@PathVariable(value = "id") UUID unitId, UnitPayload unitPayload){
+    private ResponseEntity<TemplateApi> updateUnit(@PathVariable(value = "id") UUID unitId, UnitPayload unitPayload){
 
         UnitDto unitDto = new UnitDto();
         unitDto.setId(unitId);
@@ -68,7 +63,7 @@ public class UnitController {
         return ResponseEntity.ok(templateApi);
     }
     @DeleteMapping("/unit/{id}")
-    public ResponseEntity<TemplateApi> deleteUnit(@PathVariable(value = "id") UUID unitId){
+    private ResponseEntity<TemplateApi> deleteUnit(@PathVariable(value = "id") UUID unitId){
         UUID idUserCurrent = UUID.randomUUID();
         String fullName = "";
 

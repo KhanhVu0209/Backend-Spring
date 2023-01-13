@@ -7,10 +7,9 @@ import java.util.UUID;
 
 @Entity
 public class Role {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id")
-    private UUID id;
+    private UUID Id;
     @Basic
     @Column(name = "rolename")
     private String roleName;
@@ -31,11 +30,11 @@ public class Role {
     private String roleCode;
 
     public UUID getId() {
-        return id;
+        return Id;
     }
 
     public void setId(UUID id) {
-        this.id = id;
+        this.Id = id;
     }
 
     public String getRoleName() {

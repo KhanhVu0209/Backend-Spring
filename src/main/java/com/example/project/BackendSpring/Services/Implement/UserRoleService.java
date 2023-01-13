@@ -1,5 +1,6 @@
 package com.example.project.BackendSpring.Services.Implement;
 
+import com.example.project.BackendSpring.Models.ListRoleOfUser;
 import com.example.project.BackendSpring.Models.UserRole;
 import com.example.project.BackendSpring.Repositories.UserRoleRepository;
 import com.example.project.BackendSpring.Services.Interfaces.UserRoleInterface;
@@ -15,5 +16,10 @@ public class UserRoleService implements UserRoleInterface {
     @Override
     public List<UserRole> listUserRole(UUID idUser) {
         return userRoleRepository.GetAllRoleOfUser(idUser);
+    }
+
+    @Override
+    public ListRoleOfUser GetAllInforRoleOfUser(UUID idUUser) {
+        return userRoleRepository.GetAllInforRoleOfUser(idUUser);
     }
 }

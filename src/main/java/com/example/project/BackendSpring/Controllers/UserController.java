@@ -3,10 +3,12 @@ package com.example.project.BackendSpring.Controllers;
 import com.example.project.BackendSpring.Configs.JwtService;
 import com.example.project.BackendSpring.Dtos.UserDto;
 import com.example.project.BackendSpring.Models.User;
+import com.example.project.BackendSpring.Models.UserRole;
 import com.example.project.BackendSpring.Payload.UserPayloads.LoginUserRequest;
 import com.example.project.BackendSpring.Payload.UserPayloads.TokenModel;
 import com.example.project.BackendSpring.Payload.UserPayloads.UserLoginRespons;
 import com.example.project.BackendSpring.Services.Implement.RoleService;
+import com.example.project.BackendSpring.Services.Implement.UserRoleService;
 import com.example.project.BackendSpring.Services.Implement.UserService;
 import com.example.project.BackendSpring.Utilities.TemplateApi;
 import com.example.project.BackendSpring.auth.RegisterRequest;
@@ -32,6 +34,8 @@ public class UserController {
     UserService userService;
     @Autowired
     RoleService roleService;
+    @Autowired
+    UserRoleService userRoleService;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
@@ -77,8 +81,8 @@ public class UserController {
         if (check.getFail()) return new ResponseEntity<>(check, HttpStatus.OK);
         return new ResponseEntity<>(new UserLoginRespons() {{
             setId(check.getId());
-            setSuccess(true);
-            setFail(false);
+            setSuccess(check.getSuccess());
+            setFail(check.getFail());
             setMessage(check.getMessage());
             setData(check.getData());
         }}, HttpStatus.OK);
@@ -94,12 +98,14 @@ public class UserController {
         if (!user.isActive()){
             return new UserLoginRespons(null,false,true,"Tài khoản này chưa được kich hoạt !",null, null);
         }
-        if (user.getPassword() != loginUserRequest.getPassword()){
+        if (passwordEncoder.matches(loginUserRequest.getPassword(), user.getPassword())){
             return new UserLoginRespons(null,false,true,"Mật khẩu không chính xác !",null, null);
         }
         var jwtToken = jwtService.generateToken(user);
         TokenModel tokenModel = new TokenModel(jwtToken, "");
 
-        return new UserLoginRespons(user.getId(),false,true,"Đăng kí thành công. Hãy kiểm tra hộp thư của bạn và xác nhận mã !",tokenModel, null);
+        var dataRoleUser = userRoleService.GetAllInforRoleOfUser(user.getId());
+
+        return new UserLoginRespons(user.getId(),false,true,"Đăng kí thành công. Hãy kiểm tra hộp thư của bạn và xác nhận mã !",tokenModel, dataRoleUser);
     }
 }

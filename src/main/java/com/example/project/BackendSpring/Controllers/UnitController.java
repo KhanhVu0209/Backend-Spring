@@ -35,13 +35,13 @@ public class UnitController {
 
         UnitDto unitDto = new UnitDto();
         unitDto.setId(UUID.randomUUID());
-        unitDto.setUnitName(unitPayload.getUnitName());
-        unitDto.setCreatedBy(idUserCurrent);
-        unitDto.setUnitCode(unitPayload.getUnitCode());
-        unitDto.setParentId(unitPayload.getParentId());
+        unitDto.setUnitname(unitPayload.getUnitName());
+        unitDto.setCreatedby(idUserCurrent);
+        unitDto.setUnitcode(unitPayload.getUnitCode());
+        unitDto.setParentid(unitPayload.getParentId());
         unitDto.setStatus(0);
-        unitDto.setCreatedDate(new Date());
-        unitDto.setHide(true);
+        unitDto.setCreateddate(new Date());
+        unitDto.setIshide(true);
 
         final TemplateApi templateApi = unitService.InsertUnit(unitDto, idUserCurrent, fullName);
         return ResponseEntity.ok(templateApi);
@@ -52,9 +52,9 @@ public class UnitController {
 
         UnitDto unitDto = new UnitDto();
         unitDto.setId(unitId);
-        unitDto.setUnitName(unitPayload.getUnitName());
-        unitDto.setUnitCode(unitPayload.getUnitCode());
-        unitDto.setParentId(unitPayload.getParentId());
+        unitDto.setUnitname(unitPayload.getUnitName());
+        unitDto.setUnitcode(unitPayload.getUnitCode());
+        unitDto.setParentid(unitPayload.getParentId());
 
         UUID idUserCurrent = UUID.randomUUID();
         String fullName = "";

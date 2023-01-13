@@ -9,34 +9,34 @@ import java.util.UUID;
 public class Diary {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    @Column(name = "Id")
+    @Column(name = "id")
     private UUID id;
     @Basic
-    @Column(name = "Content")
+    @Column(name = "content")
     private String content;
     @Basic
-    @Column(name = "UserId")
+    @Column(name = "userid")
     private UUID userId;
     @Basic
-    @Column(name = "DateCreate")
+    @Column(name = "datecreate")
     private Date dateCreate;
     @Basic
-    @Column(name = "Title")
+    @Column(name = "title")
     private String title;
     @Basic
-    @Column(name = "Operation")
+    @Column(name = "operation")
     private String operation;
     @Basic
-    @Column(name = "Table")
+    @Column(name = "table")
     private String table;
     @Basic
-    @Column(name = "IsSuccess")
+    @Column(name = "issuccess")
     private Boolean isSuccess;
     @Basic
-    @Column(name = "UserName")
+    @Column(name = "username")
     private String userName;
     @Basic
-    @Column(name = "WithId")
+    @Column(name = "withid")
     private UUID withId;
 
     public UUID getId() {

@@ -1,67 +1,40 @@
-package com.example.project.BackendSpring.Models;
+package com.example.project.BackendSpring.Dtos;
 
 import jakarta.persistence.*;
 
 import java.util.Date;
 import java.util.UUID;
 
-@Entity
-public class User {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Id
-    @Column(name = "id")
+public class UserDto {
     private UUID id;
-    @Basic
-    @Column(name = "fullname")
     private String fullname;
-    @Basic
-    @Column(name = "description")
     private String description;
-    @Basic
-    @Column(name = "password")
     private String password;
-    @Basic
-    @Column(name = "email")
     private String email;
-    @Basic
-    @Column(name = "phone")
     private String phone;
-    @Basic
-    @Column(name = "usertypeid")
     private UUID userTypeId;
-    @Basic
-    @Column(name = "address")
     private String address;
-    @Basic
-    @Column(name = "status")
     private Integer status;
-    @Basic
-    @Column(name = "createddate")
     private Date createdDate;
-    @Basic
-    @Column(name = "usercode")
     private String userCode;
-    @Basic
-    @Column(name = "islocked")
     private boolean isLocked;
-    @Basic
-    @Column(name = "isdeleted")
     private boolean isDeleted;
-    @Basic
-    @Column(name = "unitid")
     private UUID unitId;
-    @Basic
-    @Column(name = "isactive")
     private boolean isActive;
-    @Basic
-    @Column(name = "createdby")
     private UUID createdBy;
-    @Basic
-    @Column(name = "activecode")
     private String activeCode;
-    @Basic
-    @Column(name = "avatar")
     private String avatar;
+
+    //extend
+    private UUID idRole;
+
+    public UUID getIdRole() {
+        return idRole;
+    }
+
+    public void setIdRole(UUID idRole) {
+        this.idRole = idRole;
+    }
 
     public UUID getId() {
         return id;

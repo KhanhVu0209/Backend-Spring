@@ -28,6 +28,8 @@ public class TemplateApi {
         Success = success;
         Fail = fail;
     }
+    public TemplateApi() {
+    }
 
     public Object getPayload() {
         return Payload;

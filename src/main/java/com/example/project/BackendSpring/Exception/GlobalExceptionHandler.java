@@ -1,7 +1,6 @@
 package com.example.project.BackendSpring.Exception;
 
-import com.example.project.BackendSpring.Services.Implement.UnitService;
-import com.example.project.BackendSpring.Utilities.ErrorResponse;
+import com.example.project.BackendSpring.Utilities.TemplateApi;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -17,14 +16,14 @@ public class GlobalExceptionHandler {
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
-    private ResponseEntity<ErrorResponse> handleException(Exception ex) {
+    private ResponseEntity<TemplateApi> handleException(Exception ex) {
         // log exception
-        ErrorResponse error = new ErrorResponse();
-        error.setError(ex.getClass().getSimpleName());
+        TemplateApi error = new TemplateApi();
         error.setMessage("Đã xảy ra lỗi");
-        error.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        error.setFail(true);
+        error.setSuccess(false);
 
-        logger.error("Đã xảy ra lỗi: " + error.getError());
+        logger.error("Đã xảy ra lỗi: " + error.getMessage(), error);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
 

@@ -1,79 +1,81 @@
 package com.example.project.BackendSpring.Dtos;
 
+import jakarta.persistence.Column;
+
 import java.util.Date;
 import java.util.UUID;
 
 public class UnitDto {
-    private UUID Id;
-    private UUID ParentId;
-    private UUID CreatedBy;
-    private String UnitName;
-    private String UnitCode;
-    private Integer Status;
-    private Boolean IsHide;
-    private Date CreatedDate;
+    private UUID id;
+    private String unitname;
+    private UUID parentid;
+    private Integer status;
+    private UUID createdby;
+    private Date createddate;
+    private String unitcode;
+    private Boolean ishide;
 
     public UUID getId() {
-        return Id;
+        return id;
     }
 
     public void setId(UUID id) {
-        Id = id;
+        this.id = id;
     }
 
-    public UUID getParentId() {
-        return ParentId;
+    public String getUnitname() {
+        return unitname;
     }
 
-    public void setParentId(UUID parentId) {
-        ParentId = parentId;
+    public void setUnitname(String unitname) {
+        this.unitname = unitname;
     }
 
-    public UUID getCreatedBy() {
-        return CreatedBy;
+    public UUID getParentid() {
+        return parentid;
     }
 
-    public void setCreatedBy(UUID createdBy) {
-        CreatedBy = createdBy;
-    }
-
-    public String getUnitName() {
-        return UnitName;
-    }
-
-    public void setUnitName(String unitName) {
-        UnitName = unitName;
-    }
-
-    public String getUnitCode() {
-        return UnitCode;
-    }
-
-    public void setUnitCode(String unitCode) {
-        UnitCode = unitCode;
+    public void setParentid(UUID parentid) {
+        this.parentid = parentid;
     }
 
     public Integer getStatus() {
-        return Status;
+        return status;
     }
 
     public void setStatus(Integer status) {
-        Status = status;
+        this.status = status;
     }
 
-    public Boolean getHide() {
-        return IsHide;
+    public UUID getCreatedby() {
+        return createdby;
     }
 
-    public void setHide(Boolean hide) {
-        IsHide = hide;
+    public void setCreatedby(UUID createdby) {
+        this.createdby = createdby;
     }
 
-    public Date getCreatedDate() {
-        return CreatedDate;
+    public Date getCreateddate() {
+        return createddate;
     }
 
-    public void setCreatedDate(Date createdDate) {
-        CreatedDate = createdDate;
+    public void setCreateddate(Date createddate) {
+        this.createddate = createddate;
+    }
+
+    public String getUnitcode() {
+        return unitcode;
+    }
+
+    public void setUnitcode(String unitcode) {
+        this.unitcode = unitcode;
+    }
+
+    public Boolean getIshide() {
+        return ishide;
+    }
+
+    public void setIshide(Boolean ishide) {
+        this.ishide = ishide;
     }
 }

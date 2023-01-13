@@ -12,24 +12,19 @@ public class Unit {
     @Column(name = "id")
     private UUID id;
     @Column(name = "unitname")
-    private String unitName;
+    private String unitname;
     @Column(name = "parentid")
-
-    private UUID parentId;
+    private UUID parentid;
     @Column(name = "status")
-
     private Integer status;
     @Column(name = "createdby")
-    private UUID createdBy;
+    private UUID createdby;
     @Column(name = "createddate")
-
-    private Date createdDate;
+    private Date createddate;
     @Column(name = "unitcode")
-
-    private String unitCode;
+    private String unitcode;
     @Column(name = "ishide")
-
-    private Boolean isHide;
+    private Boolean ishide;
 
     public UUID getId() {
         return id;
@@ -39,20 +34,20 @@ public class Unit {
         this.id = id;
     }
 
-    public String getUnitName() {
-        return unitName;
+    public String getUnitname() {
+        return unitname;
     }
 
-    public void setUnitName(String unitName) {
-        this.unitName = unitName;
+    public void setUnitname(String unitname) {
+        this.unitname = unitname;
     }
 
-    public UUID getParentId() {
-        return parentId;
+    public UUID getParentid() {
+        return parentid;
     }
 
-    public void setParentId(UUID parentId) {
-        this.parentId = parentId;
+    public void setParentid(UUID parentid) {
+        this.parentid = parentid;
     }
 
     public Integer getStatus() {
@@ -63,35 +58,35 @@ public class Unit {
         this.status = status;
     }
 
-    public UUID getCreatedBy() {
-        return createdBy;
+    public UUID getCreatedby() {
+        return createdby;
     }
 
-    public void setCreatedBy(UUID createdBy) {
-        this.createdBy = createdBy;
+    public void setCreatedby(UUID createdby) {
+        this.createdby = createdby;
     }
 
-    public Date getCreatedDate() {
-        return createdDate;
+    public Date getCreateddate() {
+        return createddate;
     }
 
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
+    public void setCreateddate(Date createddate) {
+        this.createddate = createddate;
     }
 
-    public String getUnitCode() {
-        return unitCode;
+    public String getUnitcode() {
+        return unitcode;
     }
 
-    public void setUnitCode(String unitCode) {
-        this.unitCode = unitCode;
+    public void setUnitcode(String unitcode) {
+        this.unitcode = unitcode;
     }
 
-    public Boolean getHide() {
-        return isHide;
+    public Boolean getIshide() {
+        return ishide;
     }
 
-    public void setHide(Boolean hide) {
-        isHide = hide;
+    public void setIshide(Boolean ishide) {
+        this.ishide = ishide;
     }
 }

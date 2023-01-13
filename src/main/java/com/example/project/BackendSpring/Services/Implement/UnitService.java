@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -37,7 +36,7 @@ public class UnitService implements UnitInterface {
         Unit unit = unitRepository.findById(unitDto.getId()).orElse(null);
         if (unit == null) return new TemplateApi("Không tìm thấy phòng ban", false, true);
 
-        unit.setUnitName(unitDto.getUnitName());
+        unit.setUnitname(unitDto.getUnitcode());
         unitRepository.save(unit);
         diaries.add(saveToDiary.InsertDiary("Update", idUserCurrent, unitDto.getId(), fullName, "Unit", ""));
 

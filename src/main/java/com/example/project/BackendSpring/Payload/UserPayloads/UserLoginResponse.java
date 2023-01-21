@@ -1,25 +1,28 @@
 package com.example.project.BackendSpring.Payload.UserPayloads;
 
-import com.example.project.BackendSpring.Models.ListRoleOfUser;
 import java.util.UUID;
 
-public class UserLoginRespons {
+public class UserLoginResponse {
     private UUID Id;
     private Boolean Success;
     private Boolean Fail;
     private String Message;
-    private TokenModel Data;
-    private ListRoleOfUser RoleList;
-    public UserLoginRespons() {
-    }
+    private Object Data;
+    private Object[] RoleList;
+    private Boolean IsAdmin;
 
-    public UserLoginRespons(UUID id, Boolean success, Boolean fail, String message, TokenModel data, ListRoleOfUser roleList) {
+
+    public UserLoginResponse(UUID id, Boolean success, Boolean fail, String message, Object data, Object[] roleList, Boolean isAdmin) {
         Id = id;
         Success = success;
         Fail = fail;
         Message = message;
         Data = data;
         RoleList = roleList;
+        IsAdmin = isAdmin;
+    }
+
+    public UserLoginResponse() {
     }
 
     public UUID getId() {
@@ -54,19 +57,27 @@ public class UserLoginRespons {
         Message = message;
     }
 
-    public TokenModel getData() {
+    public Object getData() {
         return Data;
     }
 
-    public void setData(TokenModel data) {
+    public void setData(Object data) {
         Data = data;
     }
 
-    public ListRoleOfUser getRoleList() {
+    public Object[] getRoleList() {
         return RoleList;
     }
 
-    public void setRoleList(ListRoleOfUser roleList) {
+    public void setRoleList(Object[] roleList) {
         RoleList = roleList;
+    }
+
+    public Boolean getAdmin() {
+        return IsAdmin;
+    }
+
+    public void setAdmin(Boolean admin) {
+        IsAdmin = admin;
     }
 }

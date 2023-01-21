@@ -1,209 +1,89 @@
 package com.example.project.BackendSpring.Models;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.UUID;
 
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
-public class User {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+@Table(name="`user`")
+public class User implements UserDetails {
     @Id
-    @Column(name = "id")
+    @Column(name = "id", columnDefinition = "uniqueidentifier")
     private UUID id;
-    @Basic
     @Column(name = "fullname")
     private String fullname;
-    @Basic
     @Column(name = "description")
     private String description;
-    @Basic
     @Column(name = "password")
     private String password;
-    @Basic
     @Column(name = "email")
     private String email;
-    @Basic
     @Column(name = "phone")
     private String phone;
-    @Basic
-    @Column(name = "usertypeid")
-    private UUID userTypeId;
-    @Basic
+    @Column(name = "usertypeid", columnDefinition = "uniqueidentifier")
+    private UUID usertypeid;
     @Column(name = "address")
     private String address;
-    @Basic
     @Column(name = "status")
     private Integer status;
-    @Basic
     @Column(name = "createddate")
-    private Date createdDate;
-    @Basic
+    private Date createddate;
     @Column(name = "usercode")
-    private String userCode;
-    @Basic
+    private String usercode;
     @Column(name = "islocked")
-    private boolean isLocked;
-    @Basic
+    private Boolean islocked;
     @Column(name = "isdeleted")
-    private boolean isDeleted;
-    @Basic
-    @Column(name = "unitid")
-    private UUID unitId;
-    @Basic
+    private Boolean isdeleted;
+    @Column(name = "unitid", columnDefinition = "uniqueidentifier")
+    private UUID unitid;
     @Column(name = "isactive")
-    private boolean isActive;
-    @Basic
-    @Column(name = "createdby")
-    private UUID createdBy;
-    @Basic
+    private Boolean isactive;
+    @Column(name = "createdby", columnDefinition = "uniqueidentifier")
+    private UUID createdby;
     @Column(name = "activecode")
-    private String activeCode;
-    @Basic
+    private String activecode;
     @Column(name = "avatar")
     private String avatar;
 
-    public UUID getId() {
-        return id;
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return null;
     }
 
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getFullname() {
-        return fullname;
-    }
-
-    public void setFullname(String fullname) {
-        this.fullname = fullname;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getEmail() {
+    @Override
+    public String getUsername() {
         return email;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
     }
 
-    public String getPhone() {
-        return phone;
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
     }
 
-    public UUID getUserTypeId() {
-        return userTypeId;
-    }
-
-    public void setUserTypeId(UUID userTypeId) {
-        this.userTypeId = userTypeId;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
-
-    public Date getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public String getUserCode() {
-        return userCode;
-    }
-
-    public void setUserCode(String userCode) {
-        this.userCode = userCode;
-    }
-
-    public boolean isLocked() {
-        return isLocked;
-    }
-
-    public void setLocked(boolean locked) {
-        isLocked = locked;
-    }
-
-    public boolean isDeleted() {
-        return isDeleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        isDeleted = deleted;
-    }
-
-    public UUID getUnitId() {
-        return unitId;
-    }
-
-    public void setUnitId(UUID unitId) {
-        this.unitId = unitId;
-    }
-
-    public boolean isActive() {
-        return isActive;
-    }
-
-    public void setActive(boolean active) {
-        isActive = active;
-    }
-
-    public UUID getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(UUID createdBy) {
-        this.createdBy = createdBy;
-    }
-
-    public String getActiveCode() {
-        return activeCode;
-    }
-
-    public void setActiveCode(String activeCode) {
-        this.activeCode = activeCode;
-    }
-
-    public String getAvatar() {
-        return avatar;
-    }
-
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 }

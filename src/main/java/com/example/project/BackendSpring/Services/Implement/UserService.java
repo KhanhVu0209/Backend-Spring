@@ -2,10 +2,7 @@ package com.example.project.BackendSpring.Services.Implement;
 
 import com.example.project.BackendSpring.Dtos.UserDto;
 import com.example.project.BackendSpring.Models.*;
-import com.example.project.BackendSpring.Repositories.DiaryRepository;
-import com.example.project.BackendSpring.Repositories.RoleRepository;
-import com.example.project.BackendSpring.Repositories.UserRepository;
-import com.example.project.BackendSpring.Repositories.UserRoleRepository;
+import com.example.project.BackendSpring.Repositories.*;
 import com.example.project.BackendSpring.Services.Interfaces.UserInterface;
 import com.example.project.BackendSpring.Utilities.SaveToDiary;
 import com.example.project.BackendSpring.Utilities.TemplateApi;
@@ -30,8 +27,13 @@ public class UserService implements UserInterface {
     RoleRepository roleRepository;
     @Autowired
     UserRoleRepository userRoleRepository;
+    @Autowired
+    UnitRepository unitRepository;
+    @Autowired
+    UserTypeRepository userTypeRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+
     @Override
     public TemplateApi UpdateUser(UserDto UserDto, UUID idUserCurrent, String fullName) {
         List<Diary> diaries = new ArrayList<>();
@@ -49,30 +51,51 @@ public class UserService implements UserInterface {
     }
 
     @Override
-    public TemplateApi InsertUser(UserDto UserDto, UUID idUserCurrent, String fullName) {
+    public TemplateApi InsertUser(UserDto userDto, UUID idUserCurrent, String fullName) {
         List<Diary> diaries = new ArrayList<>();
         var saveToDiary = new SaveToDiary();
 
-        User user = new User();
-        BeanUtils.copyProperties(UserDto, user);
-
-        UserRole userRole = new UserRole();
-        userRole.setId(UUID.randomUUID());
-        userRole.setIdRole(UserDto.getIdRole());
-        userRole.setIdUser(user.getId());
-
-        userRoleRepository.save(userRole);
-        logger.info("Thêm mới thành công role người dùng");
+        var user = new User();
+        BeanUtils.copyProperties(userDto, user);
 
         userRepository.save(user);
         logger.info("Thêm mới thành công người dùng");
+        diaries.add(saveToDiary.InsertDiary("Create", idUserCurrent, user.getId(), fullName, "User", ""));
 
+        if (userDto.getIdrole() != null) {
+            var userRole = new UserRole();
+            userRole.setId(UUID.randomUUID());
+            userRole.setIdrole(userDto.getIdrole());
+            userRole.setIduser(user.getId());
+
+            userRoleRepository.save(userRole);
+            logger.info("Thêm mới thành công role người dùng");
+            diaries.add(saveToDiary.InsertDiary("Create", idUserCurrent, userRole.getId(), fullName, "UserRole", ""));
+        }
+
+        diaryRepository.saveAll(diaries);
         return new TemplateApi("Thêm mới thành công !", true, false);
     }
 
     @Override
     public TemplateApi GetAllUser(int pageNumber, int pageSize) {
-        var users = userRepository.findAll();
+        var users = userRepository.getAllUser();
+
+        if (pageNumber != 0 && pageSize != 0) {
+            if (pageNumber < 0) {
+                pageNumber = 1;
+            }
+            users = users.subList((pageNumber - 1) * pageSize, pageSize);
+        }
+
+        int NumPageSize = pageSize == 0 ? 1 : pageSize;
+        logger.info("Lấy danh sách thành công !");
+        return new TemplateApi(null, users.toArray(new User[0]), "Lấy danh sách thành công", true, false, pageNumber, pageSize, users.size(), NumPageSize);
+    }
+
+    @Override
+    public TemplateApi GetAllUserAvailable(int pageNumber, int pageSize) {
+        var users = userRepository.getAllUserAvailable();
 
         if (pageNumber != 0 && pageSize != 0) {
             if (pageNumber < 0) {
@@ -89,24 +112,27 @@ public class UserService implements UserInterface {
     @Override
     public TemplateApi GetUserById(UUID IdUser) {
         var user = userRepository.findById(IdUser).orElse(null);
-        if (user == null) return new TemplateApi("Không tìm thấy người dùng", false, true);
-        return new TemplateApi(user, null, "Lấy thông tin người dùng thành công", true, false, 0, 0, 1, 0);
+        if (user == null) return new TemplateApi("Không tìm thấy người dùng !", false, true);
+        return new TemplateApi(user, null, "Lấy thông tin người dùng thành công !", true, false, 0, 0, 1, 0);
     }
 
     @Override
-    public TemplateApi DeleteUser(UUID IdUser, UUID idUserCurrent, String fullName) {
+    public TemplateApi DeleteUsers(List<UUID> idUsers, UUID idUserCurrent, String fullName) {
         List<Diary> diaries = new ArrayList<>();
         var saveToDiary = new SaveToDiary();
 
-        User userById = userRepository.findById(IdUser).orElse(null);
-        if (userById == null) return new TemplateApi("Không tìm thấy người dùng", false, true);
+        var checkIdsValid = userRepository.getIdUsersByListId(idUsers);
+        if (checkIdsValid.size() != idUsers.size()) return new TemplateApi("Đã có ID không tồn tại !", false, true);
 
-        userById.setDeleted(true);
-        userById.setEmail(userById.getEmail() + "/" + userById.getId());
-        userRepository.save(userById);
+        for (int i = 0; i < idUsers.size(); i++) {
+            User userById = userRepository.findById(idUsers.get(i)).orElse(null);
 
-        diaries.add(saveToDiary.InsertDiary("Delete", idUserCurrent, userById.getId(), fullName, "User", ""));
+            userById.setIsdeleted(true);
+            userById.setEmail(userById.getEmail() + "/" + userById.getId());
+            userRepository.save(userById);
 
+            diaries.add(saveToDiary.InsertDiary("Delete", idUserCurrent, userById.getId(), fullName, "User", ""));
+        }
         diaryRepository.saveAll(diaries);
 
         logger.info("Xóa thành công người dùng");
@@ -114,7 +140,66 @@ public class UserService implements UserInterface {
     }
 
     @Override
+    public TemplateApi LockUsers(List<UUID> idUsers, UUID idUserCurrent, String fullName) {
+        List<Diary> diaries = new ArrayList<>();
+        var saveToDiary = new SaveToDiary();
+
+        var checkIdsValid = userRepository.getIdUsersByListId(idUsers);
+        if (checkIdsValid.size() != idUsers.size()) return new TemplateApi("Đã có ID không tồn tại !", false, true);
+
+        for (int i = 0; i < idUsers.size(); i++) {
+            User userById = userRepository.findById(idUsers.get(i)).orElse(null);
+
+            userById.setIslocked(true);
+            userRepository.save(userById);
+
+            diaries.add(saveToDiary.InsertDiary("Update", idUserCurrent, userById.getId(), fullName, "User", ""));
+        }
+        diaryRepository.saveAll(diaries);
+
+        logger.info("Khóa thành công người dùng");
+        return new TemplateApi("Khóa tài khoản thành công !", true, false);
+    }
+
+    @Override
+    public TemplateApi ActiveUserByCode(String email, Boolean code, UUID idUserCurrent, String fullName) {
+        List<Diary> diaries = new ArrayList<>();
+        var saveToDiary = new SaveToDiary();
+
+        var user = userRepository.findByEmail(email);
+        user.setIsactive(true);
+        userRepository.save(user);
+
+        diaries.add(saveToDiary.InsertDiary("Update", idUserCurrent, user.getId(), fullName, "User", "Kích hoạt người dùng"));
+        diaryRepository.saveAll(diaries);
+
+        logger.info("Kích hoạt thành công người dùng");
+        return new TemplateApi("Tài khoản của bạn đã được kích hoạt !", true, false);
+    }
+
+    @Override
+    public TemplateApi UpdatePassword(String email, String newPassWord, UUID idUserCurrent, String fullName) {
+        List<Diary> diaries = new ArrayList<>();
+        var saveToDiary = new SaveToDiary();
+
+        var user = userRepository.findByEmail(email);
+        user.setPassword(newPassWord);
+        userRepository.save(user);
+
+        diaries.add(saveToDiary.InsertDiary("Update", idUserCurrent, user.getId(), fullName, "User", "Cập nhật mật khẩu người dùng"));
+        diaryRepository.saveAll(diaries);
+
+        logger.info("Cập nhật mật khẩu người dùng");
+        return new TemplateApi("Cập nhật mật khẩu thành công !", true, false);
+    }
+
+    @Override
     public User GetUserByEmail(String Email) {
         return userRepository.findByEmail(Email);
+    }
+
+    @Override
+    public Optional<User> GetUserByEmailOp(String email) {
+        return userRepository.findUserByEmail(email);
     }
 }

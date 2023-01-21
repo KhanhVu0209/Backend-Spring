@@ -10,14 +10,14 @@ public class SaveToDiary {
         Diary diary = new Diary();
 
         diary.setId(UUID.randomUUID());
-        diary.setDateCreate(new Date());
-        diary.setUserId(userId);
-        diary.setWithId(idWith);
-        diary.setUserName(fullName);
+        diary.setDatecreate(new Date());
+        diary.setUserid(userId);
+        diary.setWithid(idWith);
+        diary.setUsername(fullName);
         diary.setOperation(operation);
-        diary.setSuccess(true);
-        diary.setTable(table);
-        diary.setContent(fullName + (operation.equals("Create") ? " đã thêm mới " : operation.equals("Update") ? " đã cập nhật " : " đã xóa ") + table + " - " + content);
+        diary.setIssuccess(true);
+        diary.setTableregardto(table);
+        diary.setContentdiary(fullName + (operation.equals("Create") ? " đã thêm mới " : operation.equals("Update") ? " đã cập nhật " : " đã xóa ") + table + " - " + content);
         diary.setTitle((operation.equals("Create") ? "Thêm mới vào CSDL" : operation.equals("Update") ? "Cập nhật vào CSDL" : "Xóa thông tin CSDL"));
         return diary;
     }

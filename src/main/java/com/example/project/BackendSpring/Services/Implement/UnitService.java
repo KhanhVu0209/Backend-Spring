@@ -103,4 +103,9 @@ public class UnitService implements UnitInterface {
         logger.info("Xóa thành công phòng ban");
         return new TemplateApi("Xóa thành công", true, false);
     }
+
+    @Override
+    public Unit GetUnitByUnitCode(String unitCode) {
+        return unitRepository.getUnitByUnitCode(unitCode);
+    }
 }

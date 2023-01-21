@@ -10,5 +10,5 @@ import java.util.UUID;
 @Repository
 public interface RoleRepository extends JpaRepository<Role, UUID> {
     @Query(value = "SELECT * FROM Role u WHERE u.RoleCode = :rolecode", nativeQuery = true)
-    Role findRoleByRoleCode(@Param("rolecode") String rolecode);
+    Role findRoleByRoleCode(String rolecode);
 }

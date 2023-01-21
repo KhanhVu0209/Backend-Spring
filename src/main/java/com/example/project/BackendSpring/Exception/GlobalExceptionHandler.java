@@ -23,7 +23,7 @@ public class GlobalExceptionHandler {
         error.setFail(true);
         error.setSuccess(false);
 
-        logger.error("Đã xảy ra lỗi: " + error.getMessage(), error);
+        logger.error(error.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
 

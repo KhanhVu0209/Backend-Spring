@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 public class RoleService implements RoleInterface {
     @Autowired
     RoleRepository roleRepository;
+
     @Override
     public Role roleByRoleCode(String roleCode) {
         return roleRepository.findRoleByRoleCode(roleCode);

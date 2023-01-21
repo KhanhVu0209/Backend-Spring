@@ -1,111 +1,131 @@
 package com.example.project.BackendSpring.Controllers;
 
-import com.example.project.BackendSpring.Configs.JwtService;
 import com.example.project.BackendSpring.Dtos.UserDto;
 import com.example.project.BackendSpring.Models.User;
-import com.example.project.BackendSpring.Models.UserRole;
-import com.example.project.BackendSpring.Payload.UserPayloads.LoginUserRequest;
-import com.example.project.BackendSpring.Payload.UserPayloads.TokenModel;
-import com.example.project.BackendSpring.Payload.UserPayloads.UserLoginRespons;
-import com.example.project.BackendSpring.Services.Implement.RoleService;
-import com.example.project.BackendSpring.Services.Implement.UserRoleService;
-import com.example.project.BackendSpring.Services.Implement.UserService;
+import com.example.project.BackendSpring.Services.Implement.*;
+import com.example.project.BackendSpring.Utilities.JwtService;
 import com.example.project.BackendSpring.Utilities.TemplateApi;
-import com.example.project.BackendSpring.auth.RegisterRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Instant;
-import java.util.Date;
-import java.util.UUID;
+import java.util.*;
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/user")
 @RequiredArgsConstructor
 public class UserController {
     @Autowired
     UserService userService;
     @Autowired
-    RoleService roleService;
+    UserTypeService userTypeService;
     @Autowired
-    UserRoleService userRoleService;
+    UnitService unitService;
+    @Value("${app.serverFileAvartar}")
+    private String serverFileAvartar;
+    @Value("${app.secretKey}")
+    private String secretKey;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
-    @PostMapping("/register")
-    public ResponseEntity<TemplateApi> register(@RequestBody RegisterRequest request) {
-        UserDto userDto = new UserDto();
-        userDto.setId(UUID.randomUUID());
-        userDto.setFullname(request != null ? request.getFullName() : null);
-        userDto.setEmail(request != null ? request.getEmail() : "");
-        userDto.setPassword(request != null ? passwordEncoder.encode(request.getPassword()) : "");
-        userDto.setCreatedDate(new Date());
-        userDto.setDeleted(false);
-        userDto.setLocked(false);
-        userDto.setActive(false);
-        userDto.setActiveCode(String.valueOf(Instant.now().getEpochSecond()));
-        userDto.setUserCode(String.valueOf(Instant.now().toEpochMilli()));
-        userDto.setUserTypeId(UUID.randomUUID());
-        userDto.setUnitId(UUID.randomUUID());
-        userDto.setAddress(request != null ? request.getAddress() : null);
-        userDto.setPhone(request != null ? request.getPhone() : null);
 
-        var role = roleService.roleByRoleCode("US");
-        if (role == null) {
+    //CRUD TABLE USER
+    @GetMapping("/getAllUserAvailable")
+    public ResponseEntity<TemplateApi> getAllUserAvailable(int pageNumber, int pageSize) {
+        var result = userService.GetAllUserAvailable(pageNumber, pageSize);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @GetMapping("/getAllUser")
+    public ResponseEntity<TemplateApi> getAllUser(int pageNumber, int pageSize) {
+        var result = userService.GetAllUser(pageNumber, pageSize);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @GetMapping("/getUserById/{id}")
+    public ResponseEntity<TemplateApi> getUserById(@PathVariable("id") String idUser) {
+        var result = userService.GetUserById(UUID.fromString(idUser));
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/deleteUsers")
+    public ResponseEntity<TemplateApi> deleteUsers(@RequestBody List<UUID> idUsers) {
+        UUID idUserCurrent = UUID.randomUUID();
+        String fullName = "";
+        var result = userService.DeleteUsers(idUsers, idUserCurrent, fullName);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @PutMapping("/lockUsers")
+    public ResponseEntity<TemplateApi> lockUsers(@RequestBody List<UUID> idUsers) {
+        UUID idUserCurrent = UUID.randomUUID();
+        String fullName = "";
+        var result = userService.LockUsers(idUsers, idUserCurrent, fullName);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @PostMapping("/insertUser")
+    public ResponseEntity<TemplateApi> insertUser(
+            @RequestHeader("Authorization") String token,
+            @RequestParam("fullname") String fullname,
+            @RequestParam("password") String password,
+            @RequestParam("email") String email,
+            @RequestParam("usertypeid") UUID usertypeid,
+            @RequestParam("description") String description,
+            @RequestParam("phone") String phone,
+            @RequestParam("address") String address,
+            @RequestParam("unitId") UUID unitId,
+            @RequestParam("file") MultipartFile file) throws IOException {
+        var claimData = jwtService.extractAllClaims(token.substring(7));
+
+        User user = userService.GetUserByEmail(email);
+        if (user != null) {
             return new ResponseEntity<>(new TemplateApi() {{
-                setSuccess(false);
+                setMessage("Email đã tồn tại !");
                 setFail(true);
-                setMessage("Đăng kí không thành công !");
+                setSuccess(false);
             }}, HttpStatus.OK);
         }
-        userDto.setIdRole(role.getId());
+        UserDto userDto = new UserDto();
+        userDto.setId(UUID.randomUUID());
+        userDto.setFullname(fullname);
+        userDto.setEmail(email);
+        userDto.setPassword(passwordEncoder.encode(password + secretKey));
+        userDto.setCreateddate(new Date());
+        userDto.setIsdeleted(false);
+        userDto.setIslocked(false);
+        userDto.setIsactive(false);
+        userDto.setActivecode(String.valueOf(Instant.now().getEpochSecond()));
+        userDto.setUsercode(String.valueOf(Instant.now().toEpochMilli()));
+        userDto.setUsertypeid(usertypeid);
+        userDto.setUnitid(unitId);
+        userDto.setAddress(address);
+        userDto.setPhone(phone);
+        userDto.setStatus(0);
+        userDto.setCreatedby(UUID.fromString(claimData.get("id").toString()));
+        userDto.setDescription(description);
+        userDto.setAvatar(userDto.getId() + ".jpg");
 
-        userService.InsertUser(userDto, userDto.getId(), userDto.getFullname());
-        return new ResponseEntity<>(new TemplateApi() {{
-            setSuccess(true);
-            setFail(false);
-            setMessage("Đăng kí thành công. Hãy kiểm tra hộp thư của bạn và xác nhận mã !");
-        }}, HttpStatus.OK);
+        File theDir = new File(serverFileAvartar);
+        if (!theDir.exists()) {
+            theDir.mkdirs();
+        }
+        byte[] bytes = file.getBytes();
+        Path path = Paths.get(serverFileAvartar + "/" + userDto.getId() + ".jpg");
+        Files.write(path, bytes);
 
-    }
-    @PostMapping("/login")
-    public ResponseEntity<UserLoginRespons> login(@RequestBody LoginUserRequest loginUserRequest) {
-        var check = CheckValidLogin(loginUserRequest);
-        if (check.getFail()) return new ResponseEntity<>(check, HttpStatus.OK);
-        return new ResponseEntity<>(new UserLoginRespons() {{
-            setId(check.getId());
-            setSuccess(check.getSuccess());
-            setFail(check.getFail());
-            setMessage(check.getMessage());
-            setData(check.getData());
-        }}, HttpStatus.OK);
-    }
-    private UserLoginRespons CheckValidLogin(LoginUserRequest loginUserRequest){
-        User user = userService.GetUserByEmail(loginUserRequest.getEmail());
-        if (user == null){
-            return new UserLoginRespons(null,false,true,"Tài khoản không tồn tại !",null, null);
-        }
-        if (user.isLocked()){
-            return new UserLoginRespons(null,false,true,"Tài khoản này đã bị khóa !",null, null);
-        }
-        if (!user.isActive()){
-            return new UserLoginRespons(null,false,true,"Tài khoản này chưa được kich hoạt !",null, null);
-        }
-        if (passwordEncoder.matches(loginUserRequest.getPassword(), user.getPassword())){
-            return new UserLoginRespons(null,false,true,"Mật khẩu không chính xác !",null, null);
-        }
-        var jwtToken = jwtService.generateToken(user);
-        TokenModel tokenModel = new TokenModel(jwtToken, "");
-
-        var dataRoleUser = userRoleService.GetAllInforRoleOfUser(user.getId());
-
-        return new UserLoginRespons(user.getId(),false,true,"Đăng kí thành công. Hãy kiểm tra hộp thư của bạn và xác nhận mã !",tokenModel, dataRoleUser);
+        var result = userService.InsertUser(userDto, UUID.fromString(claimData.get("id").toString()), claimData.get("username").toString());
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }

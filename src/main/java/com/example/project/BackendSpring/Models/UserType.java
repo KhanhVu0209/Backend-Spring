@@ -1,77 +1,32 @@
 package com.example.project.BackendSpring.Models;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 import java.util.UUID;
 
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
+@Table(name="`usertype`")
 public class UserType {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    @Column(name = "id")
+    @Column(name = "id", columnDefinition = "uniqueidentifier")
     private UUID id;
-    @Basic
     @Column(name = "typename")
-    private String typeName;
-    @Basic
+    private String typename;
     @Column(name = "status")
     private Integer status;
-    @Basic
-    @Column(name = "createby")
-    private UUID createBy;
-    @Basic
+    @Column(name = "createby", columnDefinition = "uniqueidentifier")
+    private UUID createby;
     @Column(name = "createdate")
-    private Date createDate;
-    @Basic
+    private Date createdate;
     @Column(name = "typecode")
-    private String typeCode;
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getTypeName() {
-        return typeName;
-    }
-
-    public void setTypeName(String typeName) {
-        this.typeName = typeName;
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
-
-    public UUID getCreateBy() {
-        return createBy;
-    }
-
-    public void setCreateBy(UUID createBy) {
-        this.createBy = createBy;
-    }
-
-    public Date getCreateDate() {
-        return createDate;
-    }
-
-    public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
-    }
-
-    public String getTypeCode() {
-        return typeCode;
-    }
-
-    public void setTypeCode(String typeCode) {
-        this.typeCode = typeCode;
-    }
+    private String typecode;
 }

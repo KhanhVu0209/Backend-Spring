@@ -1,7 +1,9 @@
 package com.example.project.BackendSpring.Configs;
 
 import com.example.project.BackendSpring.Repositories.UserRepository;
+import com.example.project.BackendSpring.Services.Implement.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,11 +20,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @RequiredArgsConstructor
 public class ApplicationConfig {
     private final UserRepository userRepository;
+    @Autowired
+    UserService userService;
 
     @Bean
     public UserDetailsService userDetailsService() {
         return username -> (UserDetails) userRepository.findUserByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                .orElseThrow(() -> new UsernameNotFoundException("Không tìm thấy người dùng !"));
     }
 
     @Bean

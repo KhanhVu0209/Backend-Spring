@@ -104,16 +104,16 @@ public class AuthController {
     public ResponseEntity<UserLoginResponse> login(@RequestBody LoginUserRequest loginUserRequest) {
         User user = userService.GetUserByEmail(loginUserRequest.getEmail());
         if (user == null) {
-            return new ResponseEntity<>(new UserLoginResponse(null, false, true, "Tài khoản không tồn tại !", null, null,null), HttpStatus.OK);
+            return new ResponseEntity<>(new UserLoginResponse(null, false, true, "Tài khoản không tồn tại !", null, null, null), HttpStatus.OK);
         }
         if (user.getIslocked()) {
-            return new ResponseEntity<>(new UserLoginResponse(null, false, true, "Tài khoản này đã bị khóa !", null, null,null), HttpStatus.OK);
+            return new ResponseEntity<>(new UserLoginResponse(null, false, true, "Tài khoản này đã bị khóa !", null, null, null), HttpStatus.OK);
         }
         if (!user.getIsactive()) {
-            return new ResponseEntity<>(new UserLoginResponse(null, false, true, "Tài khoản này chưa được kich hoạt !", null, null,null), HttpStatus.OK);
+            return new ResponseEntity<>(new UserLoginResponse(null, false, true, "Tài khoản này chưa được kich hoạt !", null, null, null), HttpStatus.OK);
         }
         if (!passwordEncoder.matches(loginUserRequest.getPassword() + secretKey, user.getPassword())) {
-            return new ResponseEntity<>(new UserLoginResponse(null, false, true, "Mật khẩu không chính xác !", null, null,null), HttpStatus.OK);
+            return new ResponseEntity<>(new UserLoginResponse(null, false, true, "Mật khẩu không chính xác !", null, null, null), HttpStatus.OK);
         }
 
         var dataRoleUsers = userRoleService.GetAllInfoRoleOfUser(user.getId());
@@ -147,8 +147,9 @@ public class AuthController {
             setAdmin(isAdmin);
         }}, HttpStatus.OK);
     }
+
     @GetMapping("/getUser")
-    public ResponseEntity getUser(HttpServletRequest request){
+    public ResponseEntity getUser(HttpServletRequest request) {
         String jwt = request.getHeader("Authorization");
         if (jwt == null || !jwt.startsWith("Bearer ")) {
             return new ResponseEntity<>(new TemplateApi("Không tìm thấy token !", false, true), HttpStatus.OK);
@@ -156,13 +157,13 @@ public class AuthController {
         jwt = jwt.substring(7);
 
         String userName = jwtService.extractUsername(jwt);
-        if (userName != null){
+        if (userName != null) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(userName);
             if (!jwtService.isTokenValid(jwt, userDetails)) {
             }
         }
 
-        return new ResponseEntity<>(new TemplateApi("thanh cong",true, false), HttpStatus.OK);
+        return new ResponseEntity<>(new TemplateApi("thanh cong", true, false), HttpStatus.OK);
     }
 
     @PutMapping("/activeUserByCode")

@@ -9,6 +9,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface UserInterface {
+    TemplateApi DeleteUserRole(UUID idRole, UUID idUser, UUID idUserCurrent, String fullName);
+    TemplateApi AddUserRole(UUID idRole, UUID idUser, UUID idUserCurrent, String fullName);
     TemplateApi UpdateUser(UserDto UserDto, UUID idUserCurrent, String fullName);
     TemplateApi InsertUser(UserDto UserDto, UUID idUserCurrent, String fullName);
     TemplateApi GetAllUser(int pageNumber, int pageSize);

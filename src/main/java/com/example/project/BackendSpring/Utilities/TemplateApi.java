@@ -1,8 +1,8 @@
 package com.example.project.BackendSpring.Utilities;
 
 public class TemplateApi {
-    private Object Payload;
-    private Object[] Payloads;
+    private Object Data;
+    private Object[] Datas;
     private String Message;
     private boolean Success;
     private boolean Fail;
@@ -11,9 +11,9 @@ public class TemplateApi {
     private int TotalElement;
     private int TotalPages;
 
-    public TemplateApi(Object payload, Object[] payloads, String message, boolean success, boolean fail, int pageNumber, int pageSize, int totalElement, int totalPages) {
-        Payload = payload;
-        Payloads = payloads;
+    public TemplateApi(Object data, Object[] datas, String message, boolean success, boolean fail, int pageNumber, int pageSize, int totalElement, int totalPages) {
+        Data = data;
+        Datas = datas;
         Message = message;
         Success = success;
         Fail = fail;
@@ -31,20 +31,20 @@ public class TemplateApi {
     public TemplateApi() {
     }
 
-    public Object getPayload() {
-        return Payload;
+    public Object getData() {
+        return Data;
     }
 
-    public void setPayload(Object payload) {
-        Payload = payload;
+    public void setData(Object data) {
+        Data = data;
     }
 
-    public Object[] getPayloads() {
-        return Payloads;
+    public Object[] getDatas() {
+        return Datas;
     }
 
-    public void setPayloads(Object[] payloads) {
-        Payloads = payloads;
+    public void setDatas(Object[] datas) {
+        Datas = datas;
     }
 
     public String getMessage() {

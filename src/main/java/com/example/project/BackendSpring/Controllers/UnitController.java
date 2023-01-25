@@ -19,14 +19,16 @@ public class UnitController {
 
     @GetMapping("/units")
     private ResponseEntity<TemplateApi> getAllUnits(int pageNumber, int pageSize) {
-        var results =  unitService.GetAllUnit(pageNumber, pageSize);
+        var results = unitService.GetAllUnit(pageNumber, pageSize);
         return ResponseEntity.ok(results);
     }
+
     @GetMapping("/unit/{id}")
     private ResponseEntity<TemplateApi> getUnitById(@PathVariable(value = "id") UUID idUnit) {
-        var result =  unitService.GetUnitById(idUnit);
+        var result = unitService.GetUnitById(idUnit);
         return ResponseEntity.ok(result);
     }
+
     @PostMapping("/unit")
     private ResponseEntity<TemplateApi> createUnit(UnitPayload unitPayload) {
 
@@ -48,7 +50,7 @@ public class UnitController {
     }
 
     @PutMapping("/unit/{id}")
-    private ResponseEntity<TemplateApi> updateUnit(@PathVariable(value = "id") UUID unitId, UnitPayload unitPayload){
+    private ResponseEntity<TemplateApi> updateUnit(@PathVariable(value = "id") UUID unitId, UnitPayload unitPayload) {
 
         UnitDto unitDto = new UnitDto();
         unitDto.setId(unitId);
@@ -62,8 +64,9 @@ public class UnitController {
         final TemplateApi templateApi = unitService.UpdateUnit(unitDto, idUserCurrent, fullName);
         return ResponseEntity.ok(templateApi);
     }
+
     @DeleteMapping("/unit/{id}")
-    private ResponseEntity<TemplateApi> deleteUnit(@PathVariable(value = "id") UUID unitId){
+    private ResponseEntity<TemplateApi> deleteUnit(@PathVariable(value = "id") UUID unitId) {
         UUID idUserCurrent = UUID.randomUUID();
         String fullName = "";
 

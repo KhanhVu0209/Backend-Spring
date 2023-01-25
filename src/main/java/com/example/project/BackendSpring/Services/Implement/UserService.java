@@ -6,16 +6,16 @@ import com.example.project.BackendSpring.Repositories.*;
 import com.example.project.BackendSpring.Services.Interfaces.UserInterface;
 import com.example.project.BackendSpring.Utilities.SaveToDiary;
 import com.example.project.BackendSpring.Utilities.TemplateApi;
+import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService implements UserInterface {
@@ -31,21 +31,75 @@ public class UserService implements UserInterface {
     UnitRepository unitRepository;
     @Autowired
     UserTypeRepository userTypeRepository;
+    @Autowired
+    private ModelMapper modelMapper;
 
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     @Override
-    public TemplateApi UpdateUser(UserDto UserDto, UUID idUserCurrent, String fullName) {
+    public TemplateApi DeleteUserRole(UUID idRole, UUID idUser, UUID idUserCurrent, String fullName) {
+        List<Diary> diaries = new ArrayList<>();
+        var saveToDiary = new SaveToDiary();
+
+        var data = userRoleRepository.getRoleOfUser(idUser, idRole);
+        if (data == null) {
+            return new TemplateApi("Không tìm thấy dữ liệu !", true, false);
+        }
+        userRoleRepository.deleteById(data.getId());
+        logger.info("Xóa thành công role người dùng !");
+
+        diaries.add(saveToDiary.InsertDiary("Delete", idUserCurrent, data.getId(), fullName, "User_Role", fullName + " đã xóa role của người dùng"));
+        diaryRepository.saveAll(diaries);
+
+        return new TemplateApi("Xóa thành công !", true, false);
+    }
+
+    @Override
+    public TemplateApi AddUserRole(UUID idRole, UUID idUser, UUID idUserCurrent, String fullName) {
+        var userRoles = userRoleRepository.getAllRoleOfUser(idUser);
+        for (int i = 0; i < userRoles.size(); i++) {
+            if (userRoles.get(i).getIdrole() == idRole && userRoles.get(i).getIdrole() == idUser) {
+                return new TemplateApi("Người dùng đã có role này !", false, true);
+            }
+        }
+
+        List<Diary> diaries = new ArrayList<>();
+        var saveToDiary = new SaveToDiary();
+
+        var userRole = new UserRole();
+        userRole.setId(UUID.randomUUID());
+        userRole.setIduser(idUser);
+        userRole.setIdrole(idRole);
+
+        userRoleRepository.save(userRole);
+        logger.info("Thêm mới thành công role người dùng !");
+
+        diaries.add(saveToDiary.InsertDiary("Create", idUserCurrent, userRole.getId(), fullName, "User_Role", fullName + " đã thêm mới role"));
+        diaryRepository.saveAll(diaries);
+
+        return new TemplateApi("Thêm mới thành công !", true, false);
+    }
+
+    @Override
+    public TemplateApi UpdateUser(UserDto userDto, UUID idUserCurrent, String fullName) {
         List<Diary> diaries = new ArrayList<>();
         var saveToDiary = new SaveToDiary();
 
         User user = new User();
-        user = userRepository.findById(UserDto.getId()).orElse(null);
+        user = userRepository.findById(userDto.getId()).orElse(null);
         if (user == null) return new TemplateApi("Không tìm thấy người dùng !", false, true);
 
-        BeanUtils.copyProperties(UserDto, user);
+        user.setFullname(userDto.getFullname());
+        user.setUsertypeid(userDto.getUsertypeid());
+        user.setUnitid(userDto.getUnitid());
+        user.setAddress(userDto.getAddress());
+        user.setPhone(userDto.getPhone());
+        user.setDescription(userDto.getDescription());
         userRepository.save(user);
         logger.info("Cập nhật thành công người dùng");
+
+        diaries.add(saveToDiary.InsertDiary("Update", idUserCurrent, user.getId(), fullName, "User", ""));
+        diaryRepository.saveAll(diaries);
 
         return new TemplateApi("Cập nhật thành công !", true, false);
     }
@@ -87,10 +141,14 @@ public class UserService implements UserInterface {
             }
             users = users.subList((pageNumber - 1) * pageSize, pageSize);
         }
+        List<UserDto> userDtos = users
+                .stream()
+                .map(user -> modelMapper.map(user, UserDto.class))
+                .collect(Collectors.toList());
 
         int NumPageSize = pageSize == 0 ? 1 : pageSize;
         logger.info("Lấy danh sách thành công !");
-        return new TemplateApi(null, users.toArray(new User[0]), "Lấy danh sách thành công", true, false, pageNumber, pageSize, users.size(), NumPageSize);
+        return new TemplateApi(null, userDtos.toArray(new UserDto[0]), "Lấy danh sách thành công", true, false, pageNumber, pageSize, users.size(), NumPageSize);
     }
 
     @Override
@@ -103,17 +161,24 @@ public class UserService implements UserInterface {
             }
             users = users.subList((pageNumber - 1) * pageSize, pageSize);
         }
+        List<UserDto> userDtos = users
+                .stream()
+                .map(user -> modelMapper.map(user, UserDto.class))
+                .collect(Collectors.toList());
 
         int NumPageSize = pageSize == 0 ? 1 : pageSize;
         logger.info("Lấy danh sách thành công !");
-        return new TemplateApi(null, users.toArray(new User[0]), "Lấy danh sách thành công", true, false, pageNumber, pageSize, users.size(), NumPageSize);
+        return new TemplateApi(null, userDtos.toArray(new UserDto[0]), "Lấy danh sách thành công", true, false, pageNumber, pageSize, users.size(), NumPageSize);
     }
 
     @Override
     public TemplateApi GetUserById(UUID IdUser) {
         var user = userRepository.findById(IdUser).orElse(null);
         if (user == null) return new TemplateApi("Không tìm thấy người dùng !", false, true);
-        return new TemplateApi(user, null, "Lấy thông tin người dùng thành công !", true, false, 0, 0, 1, 0);
+
+        var userDto = new UserDto();
+        BeanUtils.copyProperties(user, userDto);
+        return new TemplateApi(userDto, null, "Lấy thông tin người dùng thành công !", true, false, 0, 0, 1, 0);
     }
 
     @Override

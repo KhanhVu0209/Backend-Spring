@@ -1,5 +1,6 @@
 package com.example.project.BackendSpring.Dtos;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,6 +18,7 @@ public class UserDto {
     private UUID id;
     private String fullname;
     private String description;
+    @JsonIgnore
     private String password;
     private String email;
     private String phone;
@@ -29,8 +31,10 @@ public class UserDto {
     private Boolean isdeleted;
     private UUID unitid;
     private Boolean isactive;
+    @JsonIgnore
     private UUID createdby;
     private String activecode;
     private String avatar;
+    @JsonIgnore
     private UUID idrole;
 }

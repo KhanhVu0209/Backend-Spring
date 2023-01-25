@@ -128,4 +128,43 @@ public class UserController {
         var result = userService.InsertUser(userDto, UUID.fromString(claimData.get("id").toString()), claimData.get("username").toString());
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
+    @PutMapping("updateUser")
+    public ResponseEntity<TemplateApi> updateUser(@RequestHeader("Authorization") String token,
+                                                  @RequestParam("id") UUID id,
+                                                  @RequestParam("fullname") String fullname,
+                                                  @RequestParam("usertypeid") UUID usertypeid,
+                                                  @RequestParam("description") String description,
+                                                  @RequestParam("phone") String phone,
+                                                  @RequestParam("address") String address,
+                                                  @RequestParam("unitId") UUID unitId,
+                                                  @RequestParam("file") MultipartFile file) throws IOException{
+        var claimData = jwtService.extractAllClaims(token.substring(7));
+
+        UserDto userDto = new UserDto();
+        userDto.setId(id);
+        userDto.setFullname(fullname);
+        userDto.setUsertypeid(usertypeid);
+        userDto.setUnitid(unitId);
+        userDto.setAddress(address);
+        userDto.setPhone(phone);
+        userDto.setDescription(description);
+
+        File theDir = new File(serverFileAvartar);
+        if (!theDir.exists()) {
+            theDir.mkdirs();
+        }
+        byte[] bytes = file.getBytes();
+        Path path = Paths.get(serverFileAvartar + "/" + userDto.getId() + ".jpg");
+        Files.write(path, bytes);
+
+        var result = userService.UpdateUser(userDto, UUID.fromString(claimData.get("id").toString()), claimData.get("username").toString());
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+    @PostMapping("addRoleUser")
+    public ResponseEntity<TemplateApi> addRoleUser(@RequestParam UUID idRole, @RequestParam UUID idUser,@RequestHeader("Authorization") String token){
+        var claimData = jwtService.extractAllClaims(token.substring(7));
+        var result = userService.AddUserRole(idRole, idUser,UUID.fromString(claimData.get("id").toString()), claimData.get("username").toString());
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
 }

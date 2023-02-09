@@ -60,18 +60,17 @@ public class UserController {
     }
 
     @DeleteMapping("/deleteUsers")
-    public ResponseEntity<TemplateApi> deleteUsers(@RequestBody List<UUID> idUsers) {
-        UUID idUserCurrent = UUID.randomUUID();
-        String fullName = "";
-        var result = userService.DeleteUsers(idUsers, idUserCurrent, fullName);
+    public ResponseEntity<TemplateApi> deleteUsers(@RequestBody List<UUID> idUsers, @RequestHeader("Authorization") String token) {
+        var claimData = jwtService.extractAllClaims(token.substring(7));
+
+        var result = userService.DeleteUsers(idUsers, UUID.fromString(claimData.get("id").toString()), claimData.get("username").toString());
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @PutMapping("/lockUsers")
-    public ResponseEntity<TemplateApi> lockUsers(@RequestBody List<UUID> idUsers) {
-        UUID idUserCurrent = UUID.randomUUID();
-        String fullName = "";
-        var result = userService.LockUsers(idUsers, idUserCurrent, fullName);
+    public ResponseEntity<TemplateApi> lockUsers(@RequestBody List<UUID> idUsers, @RequestHeader("Authorization") String token) {
+        var claimData = jwtService.extractAllClaims(token.substring(7));
+        var result = userService.LockUsers(idUsers, UUID.fromString(claimData.get("id").toString()), claimData.get("username").toString());
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 

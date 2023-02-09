@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.Date;
 import java.util.UUID;
+import org.hibernate.annotations.Type;
 
 @Data
 @Builder
@@ -20,6 +21,7 @@ import java.util.UUID;
 @Table(name="`user`")
 public class User implements UserDetails {
     @Id
+    //@Type(type = "uuid-char")
     @Column(name = "id", columnDefinition = "uniqueidentifier")
     private UUID id;
     @Column(name = "fullname")

@@ -18,8 +18,8 @@ public interface UserInterface {
     TemplateApi GetUserById(UUID IdUser);
     TemplateApi DeleteUsers(List<UUID> idUsers, UUID IdUserCurrent, String fullName);
     TemplateApi LockUsers(List<UUID> idUsers, UUID IdUserCurrent, String fullName);
-    TemplateApi ActiveUserByCode(String email, Boolean code, UUID idUserCurrent, String fullName);
-    TemplateApi UpdatePassword(String email, String newPassWord, UUID idUserCurrent, String fullName);
+    TemplateApi ActiveUserByCode(String email, Boolean code);
+    TemplateApi UpdatePassword(String email, String newPassWord);
     User GetUserByEmail(String Email);
     Optional<User> GetUserByEmailOp(String email);
 }

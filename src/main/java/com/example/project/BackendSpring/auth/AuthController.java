@@ -1,5 +1,6 @@
 package com.example.project.BackendSpring.auth;
 
+import com.example.project.BackendSpring.Payload.UserPayloads.GetUserResponse;
 import com.example.project.BackendSpring.Utilities.JwtService;
 import com.example.project.BackendSpring.Dtos.UserDto;
 import com.example.project.BackendSpring.Models.User;
@@ -9,8 +10,9 @@ import com.example.project.BackendSpring.Payload.UserPayloads.UserLoginResponse;
 import com.example.project.BackendSpring.Services.Implement.*;
 import com.example.project.BackendSpring.Utilities.ListRoleOfUser;
 import com.example.project.BackendSpring.Utilities.TemplateApi;
-import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -133,7 +135,6 @@ public class AuthController {
                 })
                 .orElse(false);
 
-
         var jwtToken = jwtService.generateToken(extraClaims, user);
         return new ResponseEntity<>(new UserLoginResponse() {{
             setFail(false);
@@ -149,21 +150,32 @@ public class AuthController {
     }
 
     @GetMapping("/getUser")
-    public ResponseEntity getUser(HttpServletRequest request) {
-        String jwt = request.getHeader("Authorization");
-        if (jwt == null || !jwt.startsWith("Bearer ")) {
-            return new ResponseEntity<>(new TemplateApi("Không tìm thấy token !", false, true), HttpStatus.OK);
-        }
-        jwt = jwt.substring(7);
+    public ResponseEntity<GetUserResponse> getUser(@RequestHeader(value = "Authorization", required = false) String token) {
 
-        String userName = jwtService.extractUsername(jwt);
-        if (userName != null) {
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(userName);
-            if (!jwtService.isTokenValid(jwt, userDetails)) {
-            }
+        if (token == null) {
+            return new ResponseEntity<>(new GetUserResponse(false, "Không tìm thấy token !"), HttpStatus.OK);
         }
 
-        return new ResponseEntity<>(new TemplateApi("thanh cong", true, false), HttpStatus.OK);
+        String userEmail = jwtService.extractUsername(token.substring(7));
+        UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
+        if (jwtService.isTokenValid(token.substring(7), userDetails)) {
+            var claimData = jwtService.extractAllClaims(token.substring(7));
+
+            User user = userService.GetUserByEmail(claimData.get("email").toString());
+            var dataRoleUsers = userRoleService.GetAllInfoRoleOfUser(user.getId());
+            Boolean checkIsAdmin = dataRoleUsers.stream()
+                    .filter(role -> role.getIsAdmin() == 1)
+                    .findFirst()
+                    .map(role -> {
+                        return true;
+                    })
+                    .orElse(false);
+
+            var userDto = new UserDto();
+            BeanUtils.copyProperties(user, userDto);
+            return new ResponseEntity<>(new GetUserResponse(userDto, dataRoleUsers.toArray(new ListRoleOfUser[0]), true, "Lấy thông tin người dùng thành công !", checkIsAdmin), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(new GetUserResponse(false, "Token không hợp lệ !"), HttpStatus.OK);
     }
 
     @PutMapping("/activeUserByCode")
@@ -190,10 +202,8 @@ public class AuthController {
                 setSuccess(false);
             }}, HttpStatus.OK);
         }
-        UUID idUserCurrent = UUID.randomUUID();
-        String fullName = "";
 
-        var result = userService.ActiveUserByCode(email, code, idUserCurrent, fullName);
+        var result = userService.ActiveUserByCode(email, code);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -238,10 +248,8 @@ public class AuthController {
                 setSuccess(false);
             }}, HttpStatus.OK);
         }
-        UUID idUserCurrent = UUID.randomUUID();
-        String fullName = "";
 
-        var result = userService.UpdatePassword(email, passwordEncoder.encode(newPassWord), idUserCurrent, fullName);
+        var result = userService.UpdatePassword(email, passwordEncoder.encode(newPassWord));
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -269,10 +277,8 @@ public class AuthController {
                 setSuccess(false);
             }}, HttpStatus.OK);
         }
-        UUID idUserCurrent = UUID.randomUUID();
-        String fullName = "";
 
-        var result = userService.UpdatePassword(email, passwordEncoder.encode(newPassWord), idUserCurrent, fullName);
+        var result = userService.UpdatePassword(email, passwordEncoder.encode(newPassWord));
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }

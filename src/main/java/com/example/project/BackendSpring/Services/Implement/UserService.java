@@ -227,7 +227,7 @@ public class UserService implements UserInterface {
     }
 
     @Override
-    public TemplateApi ActiveUserByCode(String email, Boolean code, UUID idUserCurrent, String fullName) {
+    public TemplateApi ActiveUserByCode(String email, Boolean code) {
         List<Diary> diaries = new ArrayList<>();
         var saveToDiary = new SaveToDiary();
 
@@ -235,24 +235,18 @@ public class UserService implements UserInterface {
         user.setIsactive(true);
         userRepository.save(user);
 
-        diaries.add(saveToDiary.InsertDiary("Update", idUserCurrent, user.getId(), fullName, "User", "Kích hoạt người dùng"));
-        diaryRepository.saveAll(diaries);
-
         logger.info("Kích hoạt thành công người dùng");
         return new TemplateApi("Tài khoản của bạn đã được kích hoạt !", true, false);
     }
 
     @Override
-    public TemplateApi UpdatePassword(String email, String newPassWord, UUID idUserCurrent, String fullName) {
+    public TemplateApi UpdatePassword(String email, String newPassWord) {
         List<Diary> diaries = new ArrayList<>();
         var saveToDiary = new SaveToDiary();
 
         var user = userRepository.findByEmail(email);
         user.setPassword(newPassWord);
         userRepository.save(user);
-
-        diaries.add(saveToDiary.InsertDiary("Update", idUserCurrent, user.getId(), fullName, "User", "Cập nhật mật khẩu người dùng"));
-        diaryRepository.saveAll(diaries);
 
         logger.info("Cập nhật mật khẩu người dùng");
         return new TemplateApi("Cập nhật mật khẩu thành công !", true, false);

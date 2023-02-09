@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -24,10 +25,14 @@ public class SecurityConfiguration {
                 .csrf()
                 .disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/api/v1/user/**")
+                .requestMatchers("/api/v1/auth/**")
                 .permitAll()
-                .requestMatchers("/swagger-ui")
+                .requestMatchers(HttpMethod.GET,"/api/v1/user/**")
                 .permitAll()
+                .requestMatchers(HttpMethod.GET,"/api/v1/unit/**")
+                .permitAll()
+/*                .requestMatchers("/swagger-ui")
+                .permitAll()*/
                 .anyRequest()
                 .authenticated()
                 .and()

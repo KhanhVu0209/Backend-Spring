@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -19,12 +20,11 @@ public class GlobalExceptionHandler {
     private ResponseEntity<TemplateApi> handleException(Exception ex) {
         // log exception
         TemplateApi error = new TemplateApi();
-        error.setMessage("Đã xảy ra lỗi");
+        error.setMessage("Đã xảy ra lỗi !");
         error.setFail(true);
         error.setSuccess(false);
 
         logger.error(error.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
-
 }
